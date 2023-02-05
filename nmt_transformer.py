@@ -2,7 +2,7 @@ from lib import *
 
 class DataPreparing:
     def __init__(self, save_data_dir, source_lang, target_lang):
-        self.save_data_dir = self.save_data_dir
+        self.save_data_dir = save_data_dir
         self.source_lang = source_lang
         self.target_lang = target_lang
 
