@@ -29,7 +29,6 @@ class DataPreparing:
             self.save_data(target_train, os.path.join(self.save_data_dir, 'train.' +self.target_lang))
             self.save_data(target_valid, os.path.join(self.save_data_dir, 'valid.' + self.target_lang))
             self.save_data(target_test, os.path.join(self.save_data_dir,'test.' + self.target_lang))
-        
         else:
             print('Dataset exist!')
 
