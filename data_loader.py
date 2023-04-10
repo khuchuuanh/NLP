@@ -47,4 +47,71 @@ class DataLoader:
             }
         } 
 
-    
+
+    def fit_dataloader(self):
+        if not(os.path.exists(self.save_data_dir)):
+            print('Create Save Vocab  and BPE Model Folders')
+            os.mkdir(self.save_data_dir)
+
+        print('#1-Prepare Dataset')
+        source_train_data = self.load_data(self.paths['source']['train'])
+        source_valid_data = self.load_data(self.paths['source']['valid'])
+
+        source_train_data = self.load_data(self.paths['target']['train'])
+        source_valid_data = self.load_data(self.paths['target']['valid'])
+
+        print('#2 Train BPE Tokenization')
+        self.train_bpe_tokenization(self.paths['source']['train'], self.paths['source']['bpe_prefix'])
+        self.train_bpe_tokenization(self.paths['target']['train'], self.paths['target']['bpe_prefix'])
+
+        print('#3 - Load BPE Encoder')
+        self.load_bpe_encoder()
+
+        print('#4 -Encode Data')
+        source_train_sequences = self.texts_to_sequences(
+            self.segment_sentence_piece(
+            source_train_data,
+            self.paths['source']['bpe_prefix'] + self.CONFIG['bpe_model_suffix'],
+            self.paths['source']['bpe_prefix'] +'.train' + self.CONFIG['bpe_result_suffix']
+            ), 
+            mode = 'source'
+        )
+
+        source_valid_sequences = self.text_to_sequences(
+            self.segment_setence_piece(
+            source_valid_data,
+            self.paths['source']['bpe_prefix'] + self.CONFIG['bpe_model_suffix'],
+            self.paths['source']['bpe_prefix'] +'.valid' + self.CONFIG['bpe_result_suffix']
+            ),
+            mode = 'source'
+        )
+
+        target_train_sequences = self.texts_to_sequences(
+            self.segment_sentence_piece(
+            source_train_data,
+            self.paths['source']['bpe_prefix'] + self.CONFIG['bpe_model_suffix'],
+            self.paths['source']['bpe_prefix'] +'.train' + self.CONFIG['bpe_result_suffix']
+            ), 
+            mode = 'target'
+        )
+
+        target_valid_sequences = self.text_to_sequences(
+            self.segment_setence_piece(
+            source_valid_data,
+            self.paths['source']['bpe_prefix'] + self.CONFIG['bpe_model_suffix'],
+            self.paths['source']['bpe_prefix'] +'.valid' + self.CONFIG['bpe_result_suffix']
+            ),
+            mode = 'target'
+
+        )
+        print('=> Source: train: {}, valid: {}'.format(len(source_train_sequences), len(source_valid_sequences)))
+        print('=> Target: train: {}, valid: {}'.format(len(target_train_sequences), len(target_valid_sequences)))
+
+        print('#5- Convert DataLoader')
+        
+        train_dataset  = self.convert_dataset(source_train_sequences, target_train_sequences)
+        valid_dataset = self.convert_dataset(source_valid_sequences, target_valid_sequences)
+
+        print('Finish!')
+
+        return train_dataset, valid_dataset
