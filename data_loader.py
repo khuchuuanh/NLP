@@ -115,3 +115,18 @@ class DataLoader:
         print('Finish!')
 
         return train_dataset, valid_dataset
+    
+    def load_data(self, path):
+        print('=> Load data from {}'.format(path))
+        with open(path, encoding='utf-8') as f:
+            lines = f.read().strip().split('\n')
+        return lines
+    
+    def load_test_dataset(self, test_source_data_path=None, test_target_data_path=None):
+        print('#1-Prepare Test Dataset')
+        if (test_source_data_path == None) and (test_target_data_path == None):
+            source_test_data = self.load_data(self.paths['source']['test'])
+            target_test_data = self.load_data(self.paths['target']['test'])
+        else:
+            source_test_data = self.load_data(test_source_data_path)
+            target_test_data = self.load_data(test_target_data_path)
