@@ -130,3 +130,44 @@ class DataLoader:
         else:
             source_test_data = self.load_data(test_source_data_path)
             target_test_data = self.load_data(test_target_data_path)
+
+    
+        print("#2 -Load BPE Encoder")
+        self.load_bpe_endcoder()
+
+        print('#3- encoder test dataset')
+        source_test_sequences = self.texts_to_sequences([self.endcode_data(sent, 'source')for sent in source_test_data], mode = 'source')
+        target_test_sequences = self.texts_to_sequences([self.encode_data(sent, 'target') for sent in target_test_data], mode = 'target')
+
+        print('#4- Convert to Dataloader')
+
+        test_dataset = self.convert_dataset(source_test_sequences, target_test_sequences)
+
+        print('finish')
+
+        return test_dataset
+    
+    def train_bpe_tokenization(self, data_path, model_prefix):
+        model_path  = model_prefix + self.CONFIG['bpe_model_suffix']
+        vocab_path = model_prefix  + self.CONFIG['bpe_vocab_suffix']
+        print(model_path, vocab_path)
+        if not (os.path.exists(model_path) and os.path.exists(vocab_path)):
+            print(" = > BPE model does not exist => Train BPE : model path :", model_path, "vocab_path :", vocab_path)
+            train_params = '--input = {} \
+                -- paid_id = 0 \
+                -- unk_id = 1 \
+                -- bos_id = 2 \
+                -- eos_id = 3\
+                -- model_prefix = {}\
+                -- vocab-size = {}\
+                -- model_type = bpe'.format(
+                data_path,
+                model_prefix, 
+                self.bpe_vocab_size
+                )
+            sentencepiece.SentencePieceTrainer.Train(train_params)
+        else:
+            print("=> BPE moel exist => Load BPE: model path:", model_path,'vocab path:', vocab_path)
+
+    
+    
