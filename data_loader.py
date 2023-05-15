@@ -170,4 +170,15 @@ class DataLoader:
             print("=> BPE moel exist => Load BPE: model path:", model_path,'vocab path:', vocab_path)
 
     
+    def load_pbe_vocab(self, bpe_vocab_path):
+        vocab = [line.split()[0] for line in open(bpe_vocab_path, 'r').read().splitlines()]
+        token2dix = {}
+        idx2token = {}
+
+        for idx, token in enumerate(vocab):
+            token2dix[token] = idx
+            idx2token[idx] = token
+        
+        return token2dix, idx2token
     
+
