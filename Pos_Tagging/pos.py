@@ -1,68 +1,106 @@
-import numpy as np
-import nltk
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from keras.utils.np_utils import to_categorical
-from keras.utils.vis_utils import  plot_model
-from keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential, Model
-from keras.layers import *
+from lib import *
+from process_data import *
+from config import *
 
-tagged_sentences = nltk.corpus.treebank.tagged_sents()
-print(len(tagged_sentences))
+# RNN model
+model_rnn = Sequential()
+model_rnn.add(InputLayer(input_shape = (max_len_word,)))
+model_rnn.add(Embedding(vocab_size_word, embedding_dim))
+model_rnn.add(SimpleRNN(hidden_size, return_sequences= True))
+model_rnn.add(TimeDistributed(Dense(vocab_size_tag)))
+model_rnn.add(Activation('softmax'))
 
-print(tagged_sentences[0])
+model_rnn.compile(loss = 'categorical_crossentropy',
+                  optimizer = 'adam',
+                  metrics = ['accuracy'])
 
-
-sentences, sentence_tags = [],[]
-for tagged_sentence in tagged_sentences:
-  sentence, tags = zip(*tagged_sentence)
-  sentences.append(['startseq'] +[word.lower() for word in sentence] + ['endseq'])
-  sentence_tags.append(['startseq'] + [tag for tag in tags] + ['endseq'])
+model_rnn.summary()
 
 
-train_sentences, test_sentences, train_tags, test_tags = train_test_split(sentences,sentence_tags,
-                                                                          test_size= 0.3)
-
-valid_sentences, test_sentences, valid_tags, test_tags = train_test_split(test_sentences,test_tags,
-                                                                          test_size= 0.5)
-
-word_tokenizer = Tokenizer(oov_token = "<OOV>")
-word_tokenizer.fit_on_texts(train_sentences)
-train_seqs = word_tokenizer.texts_to_sequences(train_sentences)
-valid_seqs = word_tokenizer.texts_to_sequences(valid_sentences)
+history_rnn = model_rnn.fit(train_padded_seqs, train_padded_tags,
+                            batch_size = batch_size, epochs = epochs,
+                            validation_data = (valid_padded_seqs, valid_padded_tags))
 
 
-max_len_word = np.max([len(seq) for seq in train_seqs])
-print(max_len_word)
+# LSTM model
 
-vocab_size_word = len(word_tokenizer.index_word)+1
-print(vocab_size_word)
+model_lstm = Sequential()
+model_lstm.add(InputLayer(input_shape = (max_len_word,)))
+model_lstm.add(Embedding(vocab_size_word, embedding_dim))
+model_lstm.add(LSTM(hidden_size, return_sequences= True))
+model_lstm.add(TimeDistributed(Dense(vocab_size_tag)))
+model_lstm.add(Activation('softmax'))
+
+model_lstm.compile(loss = 'categorical_crossentropy',
+                  optimizer = 'adam',
+                  metrics = ['accuracy'])
+
+model_lstm.summary()
+
+history_lstm = model_lstm.fit(train_padded_seqs, train_padded_tags,
+                            batch_size = batch_size, epochs = epochs,
+                            validation_data = (valid_padded_seqs, valid_padded_tags))
 
 
-train_padded_seqs = pad_sequences(train_seqs, maxlen = max_len_word, padding = 'post')
-valid_padded_seqs = pad_sequences(valid_seqs, maxlen = max_len_word, padding = 'post')
 
-print(train_padded_seqs.shape)
-print(valid_padded_seqs.shape)
+# GRU Model
+
+model_gru = Sequential()
+model_gru.add(InputLayer(input_shape = (max_len_word,)))
+model_gru.add(Embedding(vocab_size_word, embedding_dim))
+model_gru.add(GRU(hidden_size, return_sequences= True))
+model_gru.add(TimeDistributed(Dense(vocab_size_tag)))
+model_gru.add(Activation('softmax'))
+
+model_gru.compile(loss = 'categorical_crossentropy',
+                  optimizer = 'adam',
+                  metrics = ['accuracy'])
+
+model_gru.summary()
+
+history_gru = model_gru.fit(train_padded_seqs, train_padded_tags,
+                            batch_size = batch_size, epochs = epochs,
+                            validation_data = (valid_padded_seqs, valid_padded_tags))
 
 
-tag_tokenizer = Tokenizer(oov_token = '<OOV>')
-tag_tokenizer.fit_on_texts(train_tags)
-train_tags = tag_tokenizer.texts_to_sequences(train_tags)
-valid_tags = tag_tokenizer.texts_to_sequences(valid_tags)
 
-max_len_tag =np.max([len(seq) for seq in train_tags])
-print(max_len_tag)
+# Bidirectional GRU
 
-vocab_size_tag =len(tag_tokenizer.index_word) +1
+model_bigru = Sequential()
+model_bigru.add(InputLayer(input_shape = (max_len_word,)))
+model_bigru.add(Embedding(vocab_size_word, embedding_dim))
+model_bigru.add(Bidirectional(GRU(hidden_size, return_sequences= True)))
+model_bigru.add(TimeDistributed(Dense(vocab_size_tag)))
+model_bigru.add(Activation('softmax'))
 
-train_padded_tags = pad_sequences(train_tags, maxlen = max_len_word, padding = 'post')
-valid_padded_tags = pad_sequences(valid_tags, maxlen = max_len_word, padding = 'post')
+model_bigru.compile(loss = 'categorical_crossentropy',
+                  optimizer = 'adam',
+                  metrics = ['accuracy'])
 
-print(train_padded_tags.shape), print(valid_padded_tags.shape)
+model_bigru.summary()
 
-# convert to one hot encode
-train_padded_tags = to_categorical(train_padded_tags, num_classes =vocab_size_tag )
-valid_padded_tags =  to_categorical(valid_padded_tags, num_classes =vocab_size_tag )
+history_bigru = model_bigru.fit(train_padded_seqs, train_padded_tags,
+                            batch_size = batch_size, epochs = epochs,
+                            validation_data = (valid_padded_seqs, valid_padded_tags))
+
+
+# Stack-GRU
+
+model_tackgru = Sequential()
+model_tackgru.add(InputLayer(input_shape = (max_len_word,)))
+model_tackgru.add(Embedding(vocab_size_word, embedding_dim))
+model_tackgru.add(GRU(hidden_size, return_sequences= True))
+model_tackgru.add(GRU(hidden_size, return_sequences= True))
+model_tackgru.add(TimeDistributed(Dense(vocab_size_tag)))
+model_tackgru.add(Activation('softmax'))
+
+model_tackgru.compile(loss = 'categorical_crossentropy',
+                  optimizer = 'adam',
+                  metrics = ['accuracy'])
+
+model_tackgru.summary()
+
+history_model_tackgru= model_tackgru.fit(train_padded_seqs, train_padded_tags,
+                            batch_size = batch_size, epochs = epochs,
+                            validation_data = (valid_padded_seqs, valid_padded_tags))
+
