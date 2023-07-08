@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Generate text</title>
+	<style>
+		.container {
+			margin: auto;
+			width: 50%;
+			padding: 10px;
+			border: 1px solid #ccc;
+			box-shadow: 5px 5px 5px #ccc;
+		}
+
+		.result {
+			margin-top: 20px;
+			border: 1px solid #ccc;
+			padding: 10px;
+			border-radius: 5px;
+		}
+
+		
+		.bouncing-text {
+		justify-content: center;
+		position: relative;
+		display: flex;
+		font-size: 70px;
+		font-weight: 900;
+		font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif; 
+		background-color: #fdfcdc;
+
+		}
+
+		.w, .a, .r, .n, .i, .n, .g {
+		
+		position: relative;
+		color: #4cc9f0;
+		text-shadow: 0 3px #4361ee, 0 5px #4361ee, 0 7px #4361ee;
+		}
+
+		.w {
+		animation: bounce 1s ease infinite;
+		-webkit-animation: bounce 1s ease infinite;
+		}
+
+		.a {
+		animation: bounce 1s ease infinite .1s;
+		-webkit-animation: bounce 1s ease infinite .1s;
+		}
+
+		.r {
+		animation: bounce 1s ease infinite .2s;
+		-webkit-animation: bounce 1s ease infinite .2s;
+		}
+
+		.n {
+		animation: bounce 1s ease infinite .3s;
+		-webkit-animation: bounce 1s ease infinite .3s;
+		}
+
+		.i {
+		animation: bounce 1s ease infinite .4s;
+		-webkit-animation: bounce 1s ease infinite .4s;
+		}
+
+		.n {
+		animation: bounce 1s ease infinite .5s;
+		-webkit-animation: bounce 1s ease infinite .5s;
+		}
+		.g {
+		animation: bounce 1s ease infinite .5s;
+		-webkit-animation: bounce 1s ease infinite .5s;
+		}
+
+		@keyframes bounce {
+				0%   { transform: scale(1,1) translateY(0); }
+				10%  { transform: scale(1.1,.9) translateY(0); }
+				30%  { transform: scale(.9,1.1)   translateY(-55px);}
+				50%  { transform: scale(1.05,.95) translateY(0); }
+				58%  { transform: scale(1,1) translateY(-7px); }
+				65%  { transform: scale(1,1) translateY(0);}
+				100% { transform: scale(1,1) translateY(0);}
+			}
+
+		@-webkit-keyframes bounce {
+			0%   { transform: scale(1,1) translateY(0); }
+				10%  { transform: scale(1.1,.9) translateY(0); }
+				30%  { transform: scale(.9,1.1)   translateY(-55px);}
+				50%  { transform: scale(1.05,.95) translateY(0); }
+				58%  { transform: scale(1,1) translateY(-7px);}
+				65%  { transform: scale(1,1) translateY(0);}
+				100% { transform: scale(1,1) translateY(0);} 
+		}
+
+
+		.bouncing-text:before, .bouncing-text:after {
+		content:"";
+		position: absolute;
+		background-color: rgba(0,0,0,0.4);
+		width: 50px;
+		height:5px;
+		border-radius:50%;
+		top:82px;
+		z-index:-1;
+		}
+
+		.shadow, .shadow-two {
+		position: absolute;
+		top:82px;
+		z-index:-1;
+		}
+
+		.shadow:before, .shadow:after, .shadow-two:before, .shadow-two:after {
+		content:"";
+		position: absolute;
+		background-color: rgba(0,0,0,0.4);
+		width: 50px;
+		height:5px;
+		border-radius:50%;
+		top:0;  
+		}
+
+		.bouncing-text:before {
+		left:0;
+		animation: scale 1s linear infinite;
+		-webkit-animation: scale 1s linear infinite;
+		}
+
+		@keyframes scale {
+		0% {transform: scaleX(1);}
+		25% {transform: scaleX(0.4);}
+		50% {transform: scaleX(1);}
+		75% {transform: scaleX(0.9);}
+		100% {transform: scaleX(1);}
+		}
+
+		@-webkit-keyframes scale {
+		0% {transform: scaleX(1);}
+		25% {transform: scaleX(0.4);}
+		50% {transform: scaleX(1);}
+		75% {transform: scaleX(0.9);}
+		100% {transform: scaleX(1);}
+		}
+
+		.bouncing-text:after {
+		left: 57px;
+		animation: scale 1s linear infinite .1s;
+		-webkit-animation: scale 1s linear infinite .1s;
+		}
+
+		.shadow:before {
+		left: 116px;
+		animation: scale 1s linear infinite .2s;
+		-webkit-animation: scale 1s linear infinite .2s;
+		}
+
+		.shadow:after {
+		left:175px;
+		animation: scale 1s linear infinite .3s;
+		-webkit-animation: scale 1s linear infinite .3s;
+		}
+
+		.shadow-two:before {
+		left:232px;
+		animation: scale 1s linear infinite .4s;
+		-webkit-animation: scale 1s linear infinite .4s;
+		}
+
+		.shadow-two:after {
+		left: 285px;
+		animation: scale 1s linear infinite .5s;
+		-webkit-animation: scale 1s linear infinite .5s;
+		}
+
+		.container h1 {
+		font-size: 60px;
+		text-align: center;
+		position: relative;
+		animation-name: container-animation;
+		animation-duration: 3s;
+		animation-iteration-count: infinite;
+		
+		}
+
+		@keyframes container-animation{
+		0% {
+			right: -50px;
+			opacity: 0;
+			color: #ff0000;
+		}
+		50% {
+			right: 50px;
+			opacity: 1;
+			color: #00ff00; 
+		}
+		100% {
+			right: 0;
+			opacity: 0;
+			color: #0000ff; 
+		}	
+		}
+
+
+	</style>
+</head>
+<body>
+	<div style="background-color: rgb(242, 241, 239);">
+
+	<div class="bouncing-text">
+		<div class="W">W</div>
+		<div class="A">A</div>
+		<div class="R">R</div>
+		<div class="n">N</div>
+		<div class="i">I</div>
+		<div class="n">N</div>
+		<div class="g">G</div>
+		<div class="shadow"></div>
+		<div class="shadow-two"></div>
+	  </div>
+
+	<div>
+		<p>
+			<span style="text-align: center;">
+				<span style = "font-family:'Times New Roman', Times, serif; font-size: 13pt; background-color: antiquewhite; ">
+				When you get the unexpected results. Don't angry, sorry my bad. I apologize for the awful experience but in the future I'll improve model 
+				to bring best experience for you.
+				</span>
+			</span>
+		</p>
+	</div>
+
+
+	<div class="container" style="background-color: hsla(29, 48%, 86%, 0.681);">
+		<h1  style="text-align: center; color: #615ca0; background-color: aqua;">Here is the result</h1>
+		<p style="color: rgb(228, 117, 48);">Your entered sentence: {{ input_text }}</p>
+		<div class="result">
+			<p style="color: rebeccapurple;">Generated text: {{ output_text }}</p>
+		</div>
+	</div>
+</div>
+</body>
+</html>
